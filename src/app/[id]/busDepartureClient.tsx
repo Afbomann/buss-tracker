@@ -39,7 +39,7 @@ export default function BusDepartureClient(props: {
         <div
           className={`${getColor(
             secondsUntilDeparture
-          )} w-[350px] max-w-[100%] rounded-md p-[10px]`}
+          )} w-[350px] max-w-[100%] rounded-md p-[10px] shadow-md`}
         >
           <h4 className="text-base lg:text-lg font-bold">
             {props.busDeparture.line}
