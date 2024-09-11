@@ -8,9 +8,10 @@ export default function BusDepartureClient(props: {
 }) {
   const [show, setShow] = useState(true);
   const [secondsUntilDeparture, setSecondsUntilDeparture] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    function intervalFunction() {
       if (!show) {
         return clearInterval(interval);
       }
@@ -26,6 +27,13 @@ export default function BusDepartureClient(props: {
       }
 
       setSecondsUntilDeparture((prev) => (prev = secondsUntilDepartureTemp));
+    }
+
+    setLoaded((prev) => (prev = true));
+    intervalFunction();
+
+    const interval = setInterval(() => {
+      intervalFunction();
     }, 250);
 
     return () => {
@@ -35,7 +43,7 @@ export default function BusDepartureClient(props: {
 
   return (
     <>
-      {show && (
+      {show && loaded && (
         <div
           className={`${getColor(
             secondsUntilDeparture
@@ -46,6 +54,14 @@ export default function BusDepartureClient(props: {
           </h4>
           <h4 className="tracking-widest">{props.busDeparture.destination}</h4>
           <h4>{formatTime(secondsUntilDeparture)}</h4>
+        </div>
+      )}
+
+      {!loaded && (
+        <div className="bg-slate-200 opacity-50 w-[350px] max-w-[100%] rounded-md p-[10px] shadow-md`">
+          <h4 className="text-base lg:text-lg font-bold">00</h4>
+          <h4 className="tracking-widest">---------------------</h4>
+          <h4>-------------------------------------------</h4>
         </div>
       )}
     </>
