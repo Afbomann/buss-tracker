@@ -1,36 +1,21 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Bus Tracker
 
-## Getting Started
+Simple "Bus-Tracker" site where you can find departures for a bus stop.
 
-First, run the development server:
+🔴 = 5 minutes or less until arrival <br/>
+🟠 = 15 minutes or less until arrival <br/>
+🟢 = More than 15 minutes until arrival
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+tim = hours/timer <br/>
+min = minutes/minutter <br/>
+sek = seconds/sekunder
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Hosted site: https://buss-tracker.vercel.app/
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# API
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+API endpoint used for fetching bus stop information: <br/>
+https://api.entur.io/journey-planner/v3/graphql
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+For more information about API usage visit: <br/>
+https://developer.entur.org/pages-journeyplanner-journeyplanner
