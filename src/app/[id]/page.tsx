@@ -1,87 +1,98 @@
 import { headers } from "next/headers";
-import BusDepartureClient from "./busDepartureClient";
-import { TBusData, TBusDeparture } from "@/lib/types";
 import NotFoundComponent from "../(components)/not-found";
+import { getBusStopInfo } from "@/lib/journeyPlanner";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import LineChoiceClient from "./lineChoiceClient";
 
 export default async function BusDeparturePage({
   params,
-  searchParams,
 }: {
-  params: any;
-  searchParams: any;
+  params: { id: string };
 }) {
   headers();
 
-  let busData: TBusData | null;
-  busData = await new Promise(async (resolve) => {
-    await fetch(`https://mpolden.no/atb/v2/departures/${params.id}`)
-      .then(async (response) => {
-        resolve(await response.json());
-      })
-      .catch((error) => {
-        resolve(null);
-      });
-  });
+  const busStopInfo = await getBusStopInfo(params.id, 20);
 
-  if (busData && busData?.departures?.length > 0) {
-    const lineChoices: string[] = [];
-
-    busData.departures.forEach((busDeparture) => {
-      if (!lineChoices.find((value) => value == busDeparture.line)) {
-        lineChoices.push(busDeparture.line);
-      }
-    });
-
-    if (
-      searchParams.lineChoice &&
-      searchParams.lineChoice != "Alle" &&
-      lineChoices.find((value) => value == searchParams.lineChoice)
-    ) {
-      busData.departures = busData.departures.filter(
-        (busDeparture) => busDeparture.line == searchParams.lineChoice
-      );
-    }
-
+  if (busStopInfo && busStopInfo?.data?.stopPlace) {
     return (
       <>
-        <div className="mx-auto w-fit mt-[3dvh]">
+        <h3 className="text-center text-xl lg:text-2xl font-bold mt-[5dvh]">
+          {busStopInfo.data.stopPlace.name}
+        </h3>
+
+        <div className="w-fit mx-auto mt-[2dvh]">
           <Link
-            className="bg-slate-200 rounded-md p-[10px] shadow-md text-sm lg:text-base"
+            className="text-sm lg:text-base bg-slate-200 rounded-md px-[15px] py-[5px] shadow-md"
             href="/"
           >
             Tilbake
           </Link>
         </div>
 
-        <LineChoiceClient
-          lineChoiceServer={async (lineChoice: string) => {
-            "use server";
+        <div className="flex flex-col w-[85%] mx-auto items-center mt-[3dvh] mb-[5dvh] gap-[2dvh]">
+          {busStopInfo.data.stopPlace.estimatedCalls.map((estimatedCall) => {
+            const estimatedCallDate = new Date(
+              estimatedCall.actualArrivalTime ??
+                estimatedCall.expectedArrivalTime
+            );
+            const dateNow = new Date();
+            const secondsUntilArrival = Math.floor(
+              estimatedCallDate.getTime() / 1000 - dateNow.getTime() / 1000
+            );
+            const minutesUntilArrival = Math.floor(secondsUntilArrival / 60);
+            const hoursUntilArrival = Math.floor(secondsUntilArrival / 3600);
 
-            return redirect(`/${params.id}?lineChoice=${lineChoice}`);
-          }}
-          lineChoices={lineChoices}
-          lineChoice={
-            searchParams.lineChoice &&
-            lineChoices.find((value) => value == searchParams.lineChoice)
-              ? searchParams.lineChoice
-              : "Alle"
-          }
-        />
+            if (secondsUntilArrival < -30) return;
 
-        <div className="w-[85%] mx-auto flex flex-col gap-[2dvh] items-center mt-[2dvh] mb-[5dvh]">
-          {busData.departures.map((busDeparture, busDepartureIndex) => (
-            <BusDepartureClient
-              key={busDeparture.scheduledDepartureTime}
-              busDeparture={busDeparture}
-            />
-          ))}
+            return (
+              <div
+                className={`${getColor(
+                  minutesUntilArrival
+                )} w-[350px] max-w-[100%] rounded-md p-[10px] shadow-md`}
+                key={`${estimatedCall.actualArrivalTime}-${estimatedCall.destinationDisplay}`}
+              >
+                <h4 className="text-base lg:text-lg font-bold">
+                  {estimatedCall.serviceJourney.line.publicCode}
+                </h4>
+                <h4 className="text-sm lg:text-base tracking-widest">
+                  {estimatedCall.destinationDisplay.frontText}
+                </h4>
+                <div className="flex mt-[5px]">
+                  <h5 className="text-sm lg:text-base tracking-wide">
+                    {formatNumber(estimatedCallDate.getHours())}:
+                    {formatNumber(estimatedCallDate.getMinutes())}
+                  </h5>
+                  <h5 className="text-sm lg:text-base tracking-wide ml-auto">
+                    {hoursUntilArrival >= 1 &&
+                      `${hoursUntilArrival} tim og ${
+                        minutesUntilArrival % 60
+                      } min`}
+                    {minutesUntilArrival <= 0
+                      ? "Nå"
+                      : hoursUntilArrival <= 0 &&
+                        `${minutesUntilArrival} min og ${
+                          secondsUntilArrival % 60
+                        } sek`}
+                  </h5>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </>
     );
   } else {
     return <NotFoundComponent />;
   }
+}
+
+function formatNumber(number: number): string {
+  return number >= 10 ? number.toString() : "0" + number.toString();
+}
+
+function getColor(minutes: number): string {
+  if (minutes >= -1 && minutes <= 4) return "bg-red-500";
+
+  if (minutes >= 5 && minutes <= 14) return "bg-orange-500";
+
+  return "bg-green-500";
 }

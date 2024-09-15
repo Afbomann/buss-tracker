@@ -1,12 +1,23 @@
-export type TBusDeparture = {
-  line: string;
-  scheduledDepartureTime: string;
-  destination: string;
-  isRealtimeData: Boolean;
-  isGoingTowardsCentrum: Boolean;
+export type TJourneyPlannerRequestBody = {
+  query: string;
+  variables: { id: string };
 };
 
-export type TBusData = {
-  url: string;
-  departures: TBusDeparture[];
+export type TJourneyPlannerResponseBody = {
+  data: {
+    stopPlace: {
+      name: string;
+      id: string;
+      estimatedCalls: {
+        actualArrivalTime: string;
+        expectedArrivalTime: string;
+        destinationDisplay: { frontText: string };
+        serviceJourney: {
+          line: {
+            publicCode: string;
+          };
+        };
+      }[];
+    };
+  };
 };
