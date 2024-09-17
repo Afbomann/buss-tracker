@@ -35,6 +35,12 @@ export default async function BusDeparturePage({
                 estimatedCall.expectedArrivalTime
             );
             const dateNow = new Date();
+
+            if (process.env.NODE_ENV == "production") {
+              estimatedCallDate.setHours(estimatedCallDate.getHours() + 2);
+              dateNow.setHours(dateNow.getHours() + 2);
+            }
+
             const secondsUntilArrival = Math.floor(
               estimatedCallDate.getTime() / 1000 - dateNow.getTime() / 1000
             );
