@@ -50,7 +50,7 @@ export default function BusStopClient(props: {
     return () => {
       clearInterval(interval);
     };
-  }, [props.estimatedCallDate]);
+  }, [props.estimatedCallDate, props.isProduction]);
 
   if (show)
     return (
