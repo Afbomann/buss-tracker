@@ -26,8 +26,6 @@ export default function BusStopClient(props: {
     const interval = setInterval(() => {
       const dateNow = new Date();
 
-      if (props.isProduction) dateNow.setHours(dateNow.getHours() + 2);
-
       const secondsUntilArrival = Math.floor(
         props.estimatedCallDate.getTime() / 1000 - dateNow.getTime() / 1000
       );
