@@ -23,9 +23,6 @@ export default function BusStopClient(props: {
   const [show, setShow] = useState(true);
 
   useEffect(() => {
-    if (props.isProduction)
-      props.estimatedCallDate.setHours(props.estimatedCallDate.getHours() + 2);
-
     const interval = setInterval(() => {
       const dateNow = new Date();
 
@@ -58,7 +55,7 @@ export default function BusStopClient(props: {
         className={`${getColor(
           minutesUntilArrival
         )} w-[350px] max-w-[100%] rounded-md p-[10px] shadow-md`}
-        key={`${props.estimatedCall.actualArrivalTime}-${props.estimatedCall.destinationDisplay}`}
+        key={`${props.estimatedCall.actualArrivalTime}-${props.estimatedCall.destinationDisplay.frontText}`}
       >
         <h4 className="text-base lg:text-lg font-bold">
           {props.estimatedCall.serviceJourney.line.publicCode}
