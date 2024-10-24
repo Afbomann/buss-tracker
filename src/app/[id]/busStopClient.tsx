@@ -23,9 +23,6 @@ export default function BusStopClient(props: {
   const [show, setShow] = useState(true);
 
   useEffect(() => {
-    if (props.isProduction)
-      props.estimatedCallDate.setHours(props.estimatedCallDate.getHours() - 2);
-
     const interval = setInterval(() => {
       const dateNow = new Date();
 

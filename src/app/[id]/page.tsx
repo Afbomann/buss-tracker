@@ -42,7 +42,6 @@ export default async function BusDeparturePage({
             const dateNow = new Date();
 
             if (process.env.NODE_ENV == "production") {
-              estimatedCallDate.setHours(estimatedCallDate.getHours() + 2);
               dateNow.setHours(dateNow.getHours() + 2);
             }
 
