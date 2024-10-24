@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import NotFoundComponent from "../(components)/not-found";
 import { getBusStopInfo } from "@/lib/journeyPlanner";
 import Link from "next/link";
+import BusStopClient from "./busStopClient";
 
 export default async function BusDeparturePage({
   params,
@@ -18,6 +19,10 @@ export default async function BusDeparturePage({
         <h3 className="text-center text-xl lg:text-2xl font-bold mt-[5dvh]">
           {busStopInfo.data.stopPlace.name}
         </h3>
+
+        <h4 className="text-center text-lg lg:text-xl font-bold text-gray-600 mx-[7.5%]">
+          Bussene oppdaterer seg hele tiden så husk å refresh
+        </h4>
 
         <div className="w-fit mx-auto mt-[2dvh]">
           <Link
@@ -50,37 +55,14 @@ export default async function BusDeparturePage({
             if (secondsUntilArrival < -30) return;
 
             return (
-              <div
-                className={`${getColor(
-                  minutesUntilArrival
-                )} w-[350px] max-w-[100%] rounded-md p-[10px] shadow-md`}
+              <BusStopClient
+                secondsUntilArrival={secondsUntilArrival}
+                minutesUntilArrival={minutesUntilArrival}
+                hoursUntilArrival={hoursUntilArrival}
+                estimatedCall={estimatedCall}
+                estimatedCallDate={estimatedCallDate}
                 key={`${estimatedCall.actualArrivalTime}-${estimatedCall.destinationDisplay}`}
-              >
-                <h4 className="text-base lg:text-lg font-bold">
-                  {estimatedCall.serviceJourney.line.publicCode}
-                </h4>
-                <h4 className="text-sm lg:text-base tracking-widest">
-                  {estimatedCall.destinationDisplay.frontText}
-                </h4>
-                <div className="flex mt-[5px]">
-                  <h5 className="text-sm lg:text-base tracking-wide">
-                    {formatNumber(estimatedCallDate.getHours())}:
-                    {formatNumber(estimatedCallDate.getMinutes())}
-                  </h5>
-                  <h5 className="text-sm lg:text-base tracking-wide ml-auto">
-                    {hoursUntilArrival >= 1 &&
-                      `${hoursUntilArrival} tim og ${
-                        minutesUntilArrival % 60
-                      } min`}
-                    {minutesUntilArrival <= 0
-                      ? "Nå"
-                      : hoursUntilArrival <= 0 &&
-                        `${minutesUntilArrival} min og ${
-                          secondsUntilArrival % 60
-                        } sek`}
-                  </h5>
-                </div>
-              </div>
+              />
             );
           })}
         </div>
@@ -89,16 +71,4 @@ export default async function BusDeparturePage({
   } else {
     return <NotFoundComponent />;
   }
-}
-
-function formatNumber(number: number): string {
-  return number >= 10 ? number.toString() : "0" + number.toString();
-}
-
-function getColor(minutes: number): string {
-  if (minutes >= -1 && minutes <= 4) return "bg-red-500";
-
-  if (minutes >= 5 && minutes <= 14) return "bg-orange-500";
-
-  return "bg-green-500";
 }
