@@ -61,6 +61,7 @@ export default async function BusDeparturePage({
                 hoursUntilArrival={hoursUntilArrival}
                 estimatedCall={estimatedCall}
                 estimatedCallDate={estimatedCallDate}
+                isProduction={process.env.NODE_ENV == "production"}
                 key={`${estimatedCall.actualArrivalTime}-${estimatedCall.destinationDisplay}`}
               />
             );

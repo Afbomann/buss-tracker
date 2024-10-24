@@ -9,6 +9,7 @@ export default function BusStopClient(props: {
   hoursUntilArrival: number;
   estimatedCall: TJourneyPlannerEstimatedCall;
   estimatedCallDate: Date;
+  isProduction: boolean;
 }) {
   const [secondsUntilArrival, setSecondsUntilArrival] = useState(
     props.secondsUntilArrival
@@ -25,7 +26,7 @@ export default function BusStopClient(props: {
     const interval = setInterval(() => {
       const dateNow = new Date();
 
-      if (process.env.NODE_ENV == "production") {
+      if (props.isProduction) {
         props.estimatedCallDate.setHours(
           props.estimatedCallDate.getHours() + 2
         );
