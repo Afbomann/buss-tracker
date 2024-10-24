@@ -35,11 +35,10 @@ export default function BusStopClient(props: {
       setMinutesUntilArrival((prev) => (prev = minutesUntilArrival));
       setHoursUntilArrival((prev) => (prev = hoursUntilArrival));
 
-      if (secondsUntilArrival < -30)
-        setShow(() => {
-          clearInterval(interval);
-          setShow(() => false);
-        });
+      if (secondsUntilArrival < -30) {
+        clearInterval(interval);
+        setShow(() => false);
+      }
     }, 1000);
 
     return () => {
